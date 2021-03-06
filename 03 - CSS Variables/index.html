@@ -63,10 +63,8 @@
       document.documentElement.style.setProperty(`--${this.name}`,`${this.value}`+suffex)
 
     };
-
     controls.forEach(item => item.addEventListener('change', updateHandler));
     controls.forEach(item => item.addEventListener('mousemove', updateHandler));
-
   </script>
 
 </body>
