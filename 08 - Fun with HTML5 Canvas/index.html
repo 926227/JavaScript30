@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+<body>
+<canvas id="draw" width="800" height="800"></canvas>
+<script>
+  const canvas = document.querySelector('#draw');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let isDraw = false;
+  let lastX = 0;
+  let lastY = 0;
+  let hue = 1;
+  let delay = 0;
+  let lineWidthDirection = true;
+  const DELAY_DRATION = 3;
+  ctx.strokeStyle = '#555555';
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 10;
+
+
+
+  function drow (evt) {
+    if (!isDraw) return;
+    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(evt.offsetX, evt.offsetY);
+    ctx.stroke();
+
+    [lastX, lastY]= [evt.offsetX, evt.offsetY];
+
+    if (hue > 360) hue = 1;
+    hue++;
+
+    /* Рисуем с задержкой, чтобы была более плавная линия */
+    if (delay>DELAY_DRATION) {
+      if (ctx.lineWidth >= 50 || ctx.lineWidth <= 10) lineWidthDirection = !lineWidthDirection;
+      lineWidthDirection ? ctx.lineWidth-- : ctx.lineWidth++;
+      delay = 0; 
+    }
+    delay++;
+
+  }
+
+  function mouseDownHandler (evt) {
+    isDraw = true;
+    lastX = evt.offsetX;
+    lastY = evt.offsetY;
+  }
+
+  function clearCanvasHandler (evt) {
+    if (evt.code === 'Space') {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      console.log('clear done');
+    }
+  }
+
+  canvas.addEventListener('mousedown', mouseDownHandler);
+  canvas.addEventListener('mousemove', drow);
+  canvas.addEventListener('mouseup', () => isDraw = false);
+  canvas.addEventListener('mouseout', () => isDraw = false);
+  window.addEventListener('keydown', clearCanvasHandler);
+
+</script>
+
+<style>
+  html, body {
+    margin: 0;
+  }
+</style>
+
+</body>
+</html>
